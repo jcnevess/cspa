@@ -2,7 +2,7 @@ package br.edu.ufcg.cspa
 
 import scala.collection.mutable.Map
 
-object ValuesPool {
+case class ValuesPool() {
   private var values: Map[String, Any] = Map()
 
   def get[T](key: String) =
