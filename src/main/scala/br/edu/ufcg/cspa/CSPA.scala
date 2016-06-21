@@ -6,7 +6,9 @@ package br.edu.ufcg.cspa
 object CSPA {
 
   def main(args : Array[String]) {
-    println( "Hello World!" )
+
+    val ev = SimpleEvent()
+
   }
 
 }

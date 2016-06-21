@@ -1,9 +1,21 @@
 package br.edu.ufcg.cspa
 
-object ValuesPool {
-  val values: Map[String, Any] = Map()
+import scala.collection.mutable.Map
 
-  def get(key: String) = values(key)
-  def add[T](key: String, value: T) = values + (key -> value)
+object ValuesPool {
+  private var values: Map[String, Any] = Map()
+
+  def get[T](key: String) =
+    try  {
+      values(key)
+    } catch {
+      case _ : NoSuchElementException =>
+        throw new Exception("Undefined variable")
+    }
+
+  def add[T](key: String, value: T) =
+    if (values contains key) throw new Exception("Duplicated variable name")
+    else values + (key -> value)
+
   def remove(key: String) = values - key
 }

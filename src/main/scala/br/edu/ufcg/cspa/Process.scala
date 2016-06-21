@@ -2,14 +2,14 @@ package br.edu.ufcg.cspa
 
 import akka.actor.Actor
 
-trait Process extends Actor {
+case class Process(val evtStack: List[Event[_]]) extends Actor {
+
+  def this() = this(Nil)
 
   def receive: Receive
 
   def prefix(ev: Event[_]): Process = {
-    CompoundProcess(ev, this)
-    //FIXME: Recursive creation of actors?
-    //Or would it be better stack events and (maybe) Stop process?
+    Process(ev :: evtStack)
   }
 
   def >>:(ev:Event[_]): Process = prefix(ev)
