@@ -19,6 +19,11 @@ case class SimpleEvent(name: String) extends Event[Nothing] {
     throw new UnsupportedOperationException("Event with arity 0")
   override def simpleEvent(value: Nothing)(context: Process) =
     throw new UnsupportedOperationException("Event with arity 0")
+  
+  def prefix(process: Process) = Prefix("", this, process)
+  def ->(process: Process) = prefix(process)
+  
+  override def toString(): String = name
 }
 
 /*case class Channel[T]() extends Event[T] {
