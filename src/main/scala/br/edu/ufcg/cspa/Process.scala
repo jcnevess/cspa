@@ -3,18 +3,20 @@ package br.edu.ufcg.cspa
 import akka.actor.Actor
 import scala.util.Random
 
-case class Process(val evtStack: List[SimpleEvent]) /*extends Actor*/ {
+case class Process(val name: String, val evtStack: List[SimpleEvent]) /*extends Actor*/ {
   
   //val values = ValuesPool()
 
-  def this() = this(Nil)
+  def this(name: String) = this(name, Nil)
+  
+  def this() = this("", Nil)
 
   //def receive(): Receive = ???
   
   def firstProcess() = evtStack.head 
 
   def prefix(ev: SimpleEvent): Process = {
-    Process(ev :: evtStack)
+    Process("", ev :: evtStack)
   }
   
   def externalChoice(proc: Process)(choice: SimpleEvent): Process = {

@@ -7,13 +7,17 @@ object CSPA {
 
   def main(args : Array[String]) {
 
-    val ev = SimpleEvent()
-    val proc1 = Process(Nil)
-    val proc2 = Process(Nil)
+    val ev = SimpleEvent("Ev")
+    val proc1 = Process("Proc1", Nil)
+    val proc2 = Process("Proc2", Nil)
     
     val proc3 = ev >>: proc1
     val proc4 = proc3 |~| Stop
     val proc5 = proc3 |=| (Stop, ev)
+    
+    println(proc3)
+    println(proc4)
+    println(proc5)
 
   }
 
