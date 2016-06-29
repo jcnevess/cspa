@@ -3,24 +3,29 @@ package br.edu.ufcg.cspa
 import akka.actor.Actor
 import scala.util.Random
 
-case class Process(val name: String, val evtStack: List[SimpleEvent]) /*extends Actor*/ {
+case class Process(val name: String, private var evtStack: List[SimpleEvent]) extends Actor {
   
-  //val values = ValuesPool()
-
+  
+  
   def this(name: String) = this(name, Nil)
   
   def this() = this("", Nil)
 
-  //def receive(): Receive = ???
+  //Sync processes
+  def receive(): Receive = {
+    case SyncNextEvent(ev: SimpleEvent) => 
+      //PerformEvent if ev is the firstEvent of this process
+      if(ev == firstEvent) evtStack = evtStack.tail
+  }
   
-  def firstProcess() = evtStack.head 
+  def firstEvent() = evtStack.head 
 
   def prefix(ev: SimpleEvent): Process = {
     Process("", ev :: evtStack)
   }
   
   def externalChoice(proc: Process)(choice: SimpleEvent): Process = {
-    if (choice == firstProcess) this
+    if (choice == firstEvent) this
     else proc
   }
   
