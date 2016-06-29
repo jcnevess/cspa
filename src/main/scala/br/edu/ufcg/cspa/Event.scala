@@ -19,7 +19,7 @@ case class SimpleEvent() extends Event[Nothing] {
     throw new UnsupportedOperationException("Event with arity 0")
 }
 
-*/case class Channel[T]() extends Event[T] {
+/*case class Channel[T]() extends Event[T] {
   override def inputEvent(name: String, value: T)(context: Process) =
     context.getValuesPool.add(name, value)
   override def outputEvent(name: String)(context: Process) =
