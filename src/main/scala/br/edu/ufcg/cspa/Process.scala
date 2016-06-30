@@ -8,5 +8,8 @@ import scala.util.Random
  * @author Julio
  */
 trait Process extends Actor {
+  
+ def start(): List[LTSState]
+ def perform(acc: List[LTSState]): List[LTSState]
 
 }

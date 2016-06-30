@@ -4,10 +4,18 @@ package br.edu.ufcg.cspa
  * Represents a prefixed event
  * @author Julio
  */
-case class Prefix (val name: String, 
-                    val firstEvent: SimpleEvent, 
-                    val process: Process) extends Process{
+class Prefix(val name: String,
+             val firstEvent: SimpleEvent,
+             val nextProcess: Process) extends Process {
   def receive: Receive = ???
+
+  override def start(): List[LTSState] = {
+    nextProcess.perform(StartState(nextProcess) :: Nil)
+  }
   
-  override def toString(): String = firstEvent.toString + " -> " + process.toString
+  override def perform(acc: List[LTSState]): List[LTSState] = {
+    nextProcess.perform(RegularState(firstEvent, "State", nextProcess) :: acc)
+  }
+
+  override def toString(): String = firstEvent.toString + " -> " + nextProcess.toString
 }

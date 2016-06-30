@@ -8,7 +8,7 @@ case class SimpleEvent(name: String) extends Event[Nothing] {
   def simpleEvent(value: Nothing)(context: Process) =
     throw new UnsupportedOperationException("Event with arity 0")
   
-  def prefix(process: Process) = Prefix("", this, process)
+  def prefix(process: Process) = new Prefix("", this, process)
   def ->(process: Process) = prefix(process)
   
   override def toString(): String = name

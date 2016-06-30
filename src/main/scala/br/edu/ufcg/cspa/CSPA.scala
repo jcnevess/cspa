@@ -8,7 +8,7 @@ object CSPA {
   def main(args : Array[String]) {
 
     val ev = SimpleEvent("Ev")
-    val proc1 = Prefix("EvThenStop", ev, STOP)
+    val proc1 = new Prefix("EvThenStop", ev, STOP)
    
     
     /*val proc3 = ev >>: proc1
