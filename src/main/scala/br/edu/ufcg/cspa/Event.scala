@@ -1,5 +1,9 @@
 package br.edu.ufcg.cspa
 
+/**
+ * Base trait user for implementation of events
+ * @author Julio 
+ */
 trait Event[T] {
   val name: String
   
@@ -11,25 +15,3 @@ trait Event[T] {
   def !(name: String)(context: Process): T = outputEvent(name)(context)
   def $(value: T)(context: Process): T = simpleEvent(value)(context)
 }
-
-case class SimpleEvent(name: String) extends Event[Nothing] {
-  override def inputEvent(name: String, value: Nothing)(context: Process) =
-    throw new UnsupportedOperationException("Event with arity 0")
-  override def outputEvent(name: String)(context: Process) =
-    throw new UnsupportedOperationException("Event with arity 0")
-  override def simpleEvent(value: Nothing)(context: Process) =
-    throw new UnsupportedOperationException("Event with arity 0")
-  
-  def prefix(process: Process) = Prefix("", this, process)
-  def ->(process: Process) = prefix(process)
-  
-  override def toString(): String = name
-}
-
-/*case class Channel[T]() extends Event[T] {
-  override def inputEvent(name: String, value: T)(context: Process) =
-    context.getValuesPool.add(name, value)
-  override def outputEvent(name: String)(context: Process) =
-    context.getValuesPool.get(name).asInstanceOf[T]
-  override def simpleEvent(value: T)(context: Process) = value
-}*/

@@ -1,5 +1,9 @@
 package br.edu.ufcg.cspa
 
+/**
+ * Represents a prefixed event
+ * @author Julio
+ */
 case class Prefix (val name: String, 
                     val firstEvent: SimpleEvent, 
                     val process: Process) extends Process{
