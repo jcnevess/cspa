@@ -6,16 +6,18 @@ trait LTSState {
   val nextProcess: Process
 }
 
-case class RegularState(transition: SimpleEvent, name: String, nextProcess: Process) extends LTSState {}
+case class RegularState(transition: SimpleEvent, nextProcess: Process) extends LTSState {
+  val name = "STATE"
+}
 
 case class StartState(nextProcess: Process) extends LTSState {
   val transition = SimpleEvent("Nothing") //TODO refatorar
   val name = "START"
 }
 
-case class OmegaState(transition: SimpleEvent) extends LTSState {
+case class StopState(transition: SimpleEvent) extends LTSState {
   val nextProcess = SimpleProcess("Nothing") //TODO refatorar
-  val name = "OMEGA"
+  val name = "STOP"
 }
 
 case class SkipState(transition: SimpleEvent) extends LTSState {
