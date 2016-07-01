@@ -11,16 +11,16 @@ case class RegularState(transition: SimpleEvent, nextProcess: Process) extends L
 }
 
 case class StartState(nextProcess: Process) extends LTSState {
-  val transition = SimpleEvent("Nothing") //TODO refatorar
+  val transition = null
   val name = "START"
 }
 
 case class StopState(transition: SimpleEvent) extends LTSState {
-  val nextProcess = SimpleProcess("Nothing") //TODO refatorar
+  val nextProcess = null
   val name = "STOP"
 }
 
 case class SkipState(transition: SimpleEvent) extends LTSState {
-  val nextProcess = SKIP //TODO refatorar
+  val nextProcess = STOP
   val name = "SKIP"
 }

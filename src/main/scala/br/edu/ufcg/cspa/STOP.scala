@@ -10,8 +10,9 @@ object STOP extends Process {
 
   //override def receive(): Receive = ???
   
-  override def start(): List[LTSState] = StopState(SimpleEvent("Nothing")) :: Nil
-  override def perform(acc: List[LTSState]): List[LTSState] = StopState(SimpleEvent("Nothing")) :: acc
+  
+  override def start(): List[LTSState] =  Nil
+  override def perform(acc: List[LTSState]): List[LTSState] = acc
   
   override def toString(): String = "STOP"
 }

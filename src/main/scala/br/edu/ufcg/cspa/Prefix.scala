@@ -16,7 +16,7 @@ class Prefix(val name: String,
   }
   
   override def perform(acc: List[LTSState]): List[LTSState] =  nextProcess match {
-    case STOP => StopState(firstEvent) :: acc
+    case STOP => nextProcess.perform(StopState(firstEvent) :: acc)
     case SKIP => nextProcess.perform(SkipState(firstEvent) :: acc)
     case _ => nextProcess.perform(RegularState(firstEvent, nextProcess) :: acc)
   }
