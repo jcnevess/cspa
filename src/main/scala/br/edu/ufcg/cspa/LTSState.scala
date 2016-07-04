@@ -1,5 +1,7 @@
 package br.edu.ufcg.cspa
 
+import akka.actor.ActorRef
+
 trait LTSState {
   val transition: SimpleEvent
   val name: String

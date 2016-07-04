@@ -6,7 +6,7 @@ import akka.actor._
  * Represents the special process STOP
  * @author Julio
  */
-object STOP extends Process {
+class STOP extends Process {
 
   //override def receive(): Receive = ???
   
@@ -17,8 +17,8 @@ object STOP extends Process {
   override def toString(): String = "STOP"
 }
 
-/*object STOP {
+object STOP {
   def apply()(implicit as: ActorSystem): ActorRef = {
     as.actorOf(Props[STOP])
   }
-}*/
+}
