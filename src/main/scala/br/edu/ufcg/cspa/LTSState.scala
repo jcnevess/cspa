@@ -23,6 +23,6 @@ case class StopState(transition: SimpleEvent) extends LTSState {
 }
 
 case class SkipState(transition: SimpleEvent) extends LTSState {
-  val nextProcess = STOP
+  val nextProcess = null
   val name = "SKIP"
 }

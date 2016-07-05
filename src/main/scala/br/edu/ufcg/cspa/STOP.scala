@@ -1,20 +1,20 @@
 package br.edu.ufcg.cspa
 
 import akka.actor._
+import Message._
 
 /**
  * Represents the special process STOP
  * @author Julio
  */
-class STOP extends Process {
+class STOP extends Process with ActorLogging {
 
-  //override def receive(): Receive = ???
+  override def receive(): Receive = {
+    case Perform(acc) => log.info(acc + toString())
+    case Start => log.info(toString())
+  } 
   
-  
-  override def start(): List[LTSState] =  Nil
-  override def perform(acc: List[LTSState]): List[LTSState] = acc
-  
-  override def toString(): String = "STOP"
+  override def toString() = "STOP"
 }
 
 object STOP {

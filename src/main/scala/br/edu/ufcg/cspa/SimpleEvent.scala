@@ -11,8 +11,8 @@ case class SimpleEvent(name: String) extends Event[Nothing] {
     throw new UnsupportedOperationException("Event with arity 0")
   
   //TODO melhorar sintaxe do operador (DSL?)
-  def prefix(process: ActorRef)(implicit as: ActorSystem) = new Prefix("", this, process)
-  def ->(process: ActorRef)(implicit as: ActorSystem)  = prefix(process)
+  /*def prefix(process: ActorRef)(implicit as: ActorSystem) = new Prefix("", this, process)
+  def ->(process: ActorRef)(implicit as: ActorSystem)  = prefix(process)*/
   
   override def toString(): String = name
 }

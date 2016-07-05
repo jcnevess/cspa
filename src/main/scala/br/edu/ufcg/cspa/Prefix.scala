@@ -11,29 +11,35 @@ class Prefix(val name: String,
              val firstEvent: SimpleEvent,
              val nextProcess: ActorRef) extends Process {
   
-  /*def receive: Receive = {
-    case Perform(acc: List[LTSState]) => perform() -> nextProcess ! Perform(RegularState(firstEvent, nextProcess))
-  }*/
+  def receive: Receive = {
+    case Perform(str) => nextProcess ! Perform(str + firstEvent.toString + " -> ")
+    case Start => nextProcess ! Perform(firstEvent.toString + " -> ")
+  }
+}
+  
+/*  def receive: Receive = {
+    case Perform(acc: List[LTSState]) => nextProcess ! Perform(RegularState(firstEvent, nextProcess) :: acc)
+  }
 
   override def start(): List[LTSState] = {
-    perform(StartState(this) :: Nil)
+    nextProcess ! Perform(StartState(this) :: Nil)
   }
   
-  /*override def perform(acc: List[LTSState]): List[LTSState] =  nextProcess.proc match {
+  override def perform(acc: List[LTSState]): List[LTSState] =  nextProcess.proc match {
     case STOP => nextProcess.proc.perform(StopState(firstEvent) :: acc)
     case SKIP => nextProcess.proc.perform(SkipState(firstEvent) :: acc)
     case _ => nextProcess.proc.perform(RegularState(firstEvent, nextProcess.proc) :: acc)
-  }*/
+  }
   
   override def perform(acc: List[LTSState]): List[LTSState] = {
     nextProcess!Perform(acc)
   }
 
   override def toString(): String = firstEvent.toString + " -> " + nextProcess.toString
-}
+}*/
 
-/*object Prefix {
-  def apply(name: String, firstEvent: SimpleEvent, nextProcess: Process)(implicit as: ActorSystem): ActorRef = {
+object Prefix {
+  def apply(name: String, firstEvent: SimpleEvent, nextProcess: ActorRef)(implicit as: ActorSystem): ActorRef = {
     as.actorOf(Props(classOf[Prefix], name, firstEvent, nextProcess))
   }
-}*/
+}

@@ -9,9 +9,6 @@ import scala.util.Random
  */
 trait Process extends Actor {
   
- def receive: Receive = ???
-  
- def start(): List[LTSState]
- def perform(acc: List[LTSState]): List[LTSState]
-
+ def receive: Receive
+ 
 }

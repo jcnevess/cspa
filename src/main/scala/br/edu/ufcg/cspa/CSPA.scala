@@ -1,19 +1,25 @@
 package br.edu.ufcg.cspa
 
+import akka.actor._
+import Message._
+
 /**
  * @author ${user.name}
  */
 object CSPA {
+  
+  implicit val system = ActorSystem("System")
+  implicit def stringToEvent(a: String) = SimpleEvent(a) 
 
   def main(args : Array[String]) {
 
-    val ev = SimpleEvent("Ev")
-    val ev2 = SimpleEvent("Ev2")
-    val proc1 = ev -> (ev2 -> STOP)
-    val proc2 = ev -> (ev2 -> SKIP)
+    val st = STOP()
+    val sk = SKIP()
+    val pre = Prefix("", "a", st)
     
-    println(proc1.start())
-    println(proc2.start())
+    st ! Start
+    sk ! Start
+    pre ! Start
   }
 
 }
