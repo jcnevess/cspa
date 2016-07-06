@@ -8,10 +8,17 @@ import Message._
  * @author Julio
  */
 class STOP extends Process with ActorLogging {
+  
+  var trace: List[SingleEvent] = Nil
+  var states: List[State] = Nil
 
   override def receive(): Receive = {
-    case Perform(acc) => log.info(acc + toString())
-    case Start => log.info(toString())
+    case Perform(trace_, states_) => 
+      trace = trace_
+      states = Omega :: states_
+    case Start => 
+      states = List(Omega)
+    
   } 
   
   override def toString() = "STOP"

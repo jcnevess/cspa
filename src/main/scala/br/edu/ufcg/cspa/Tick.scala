@@ -1,3 +1,3 @@
 package br.edu.ufcg.cspa
 
-object Tick extends SimpleEvent("Tick"){}
+object Tick extends SingleEvent("Tick"){}

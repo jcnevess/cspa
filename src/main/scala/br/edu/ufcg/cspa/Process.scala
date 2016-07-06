@@ -9,6 +9,9 @@ import scala.util.Random
  */
 trait Process extends Actor {
   
+  var trace: List[SingleEvent]
+  var states: List[State]
+  
  def receive: Receive
  
 }

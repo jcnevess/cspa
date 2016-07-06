@@ -9,17 +9,17 @@ import Message._
 object CSPA {
   
   implicit val system = ActorSystem("System")
-  implicit def stringToEvent(a: String) = SimpleEvent(a) 
+  implicit def stringToEvent(a: String) = SingleEvent(a) 
 
   def main(args : Array[String]) {
 
     val st = STOP()
     val sk = SKIP()
-    val pre = Prefix("", "a", st)
+    //val pre = Prefix("", "a", st)
     
     st ! Start
     sk ! Start
-    pre ! Start
+    //pre ! Start
   }
 
 }

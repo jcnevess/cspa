@@ -7,14 +7,13 @@ import Message._
  * Represents a prefixed event
  * @author Julio
  */
-class Prefix(val name: String,
-             val firstEvent: SimpleEvent,
+class Prefix(val firstEvent: SingleEvent,
              val nextProcess: ActorRef) extends Process {
   
-  def receive: Receive = {
+  def receive: Receive = ???/*{
     case Perform(str) => nextProcess ! Perform(str + firstEvent.toString + " -> ")
     case Start => nextProcess ! Perform(firstEvent.toString + " -> ")
-  }
+  }*/
 }
   
 /*  def receive: Receive = {
@@ -39,7 +38,7 @@ class Prefix(val name: String,
 }*/
 
 object Prefix {
-  def apply(name: String, firstEvent: SimpleEvent, nextProcess: ActorRef)(implicit as: ActorSystem): ActorRef = {
+  def apply(name: String, firstEvent: SingleEvent, nextProcess: ActorRef)(implicit as: ActorSystem): ActorRef = {
     as.actorOf(Props(classOf[Prefix], name, firstEvent, nextProcess))
   }
 }

@@ -7,11 +7,21 @@ import Message._
  * Represents the special process SKIP
  * @author Julio
  */
-class SKIP extends Process with ActorLogging {
+class SKIP extends Process with ActorLogging { 
+  
+  implicit val as = context.system
+  
+  var trace: List[SingleEvent] = Nil
+  var states: List[State] = Nil
 
   override def receive(): Receive = {
-    case Perform(acc) => log.info(acc + toString())
-    case Start => log.info(toString())
+    case Perform(trace_, states_) => 
+      trace = Tick :: trace_
+      states = states_
+      STOP() ! Perform(trace, states)
+    case Start => 
+      trace = List(Tick)
+      STOP() ! Perform(trace, Nil)
   }
 
   override def toString() = "SKIP"
