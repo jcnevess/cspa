@@ -9,33 +9,13 @@ import Message._
  */
 class Prefix(val firstEvent: SingleEvent,
              val nextProcess: ActorRef) extends Process {
+
+  var trace: List[SingleEvent] = ???
+  var states: List[State] = ???
   
-  def receive: Receive = ???/*{
-    case Perform(str) => nextProcess ! Perform(str + firstEvent.toString + " -> ")
-    case Start => nextProcess ! Perform(firstEvent.toString + " -> ")
-  }*/
+  def receive: Receive = ???
+  
 }
-  
-/*  def receive: Receive = {
-    case Perform(acc: List[LTSState]) => nextProcess ! Perform(RegularState(firstEvent, nextProcess) :: acc)
-  }
-
-  override def start(): List[LTSState] = {
-    nextProcess ! Perform(StartState(this) :: Nil)
-  }
-  
-  override def perform(acc: List[LTSState]): List[LTSState] =  nextProcess.proc match {
-    case STOP => nextProcess.proc.perform(StopState(firstEvent) :: acc)
-    case SKIP => nextProcess.proc.perform(SkipState(firstEvent) :: acc)
-    case _ => nextProcess.proc.perform(RegularState(firstEvent, nextProcess.proc) :: acc)
-  }
-  
-  override def perform(acc: List[LTSState]): List[LTSState] = {
-    nextProcess!Perform(acc)
-  }
-
-  override def toString(): String = firstEvent.toString + " -> " + nextProcess.toString
-}*/
 
 object Prefix {
   def apply(name: String, firstEvent: SingleEvent, nextProcess: ActorRef)(implicit as: ActorSystem): ActorRef = {

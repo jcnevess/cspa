@@ -13,14 +13,17 @@ class STOP extends Process with ActorLogging {
   var states: List[State] = Nil
 
   override def receive(): Receive = {
-    case Perform(trace_, states_) => 
+    case Perform(trace_, states_) =>
       trace = trace_
       states = Omega :: states_
-    case Start => 
+      log.info("Omega")
+      context.stop(self)
+    case Start =>
       states = List(Omega)
-    
-  } 
-  
+      log.info("Omega")
+      context.stop(self)
+  }
+
   override def toString() = "STOP"
 }
 

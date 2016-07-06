@@ -1,6 +1,7 @@
 package br.edu.ufcg.cspa
 
 import akka.actor._
+import akka.actor.SupervisorStrategy._
 import Message._
 
 /**
@@ -18,11 +19,22 @@ class SKIP extends Process with ActorLogging {
     case Perform(trace_, states_) => 
       trace = Tick :: trace_
       states = states_
+      log.info("Tick ->")
       STOP() ! Perform(trace, states)
     case Start => 
       trace = List(Tick)
+      log.info("Tick ->")
       STOP() ! Perform(trace, Nil)
   }
+  
+  final val defaultStrategy: SupervisorStrategy = {
+  def defaultDecider: Decider = {
+    case _: ActorInitializationException ⇒ Stop
+    case _: ActorKilledException         ⇒ Escalate
+    case _: Exception                    ⇒ Restart
+  }
+  OneForOneStrategy()(defaultDecider)
+}
 
   override def toString() = "SKIP"
 }

@@ -8,7 +8,7 @@ import scala.util.Random
  * @author Julio
  */
 trait Process extends Actor {
-  
+
   var trace: List[SingleEvent]
   var states: List[State]
   
