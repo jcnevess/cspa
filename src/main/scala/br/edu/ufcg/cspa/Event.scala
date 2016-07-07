@@ -1,7 +1,7 @@
 package br.edu.ufcg.cspa
 
 /**
- * Base trait user for implementation of events
+ * Base trait used for implementation of events
  * @author Julio 
  */
 trait Event[T] {

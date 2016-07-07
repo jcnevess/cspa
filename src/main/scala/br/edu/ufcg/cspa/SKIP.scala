@@ -19,11 +19,9 @@ class SKIP extends Process with ActorLogging {
     case Perform(trace_, states_) => 
       trace = Tick :: trace_
       states = states_
-      log.info("Tick ->")
       STOP() ! Perform(trace, states)
     case Start => 
       trace = List(Tick)
-      log.info("Tick ->")
       STOP() ! Perform(trace, Nil)
   }
   
