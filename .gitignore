@@ -13,7 +13,7 @@ syntax: glob
 .project
 .manager
 .scala_dependencies
-.cache-main
+.cache-*
 
 # idea
 .idea

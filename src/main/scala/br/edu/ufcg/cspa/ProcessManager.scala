@@ -42,8 +42,13 @@ class ProcessManager extends Actor with ActorLogging {
     try {
       tryPersistProcess(name, proc)
     } catch {
-      case e: IllegalArgumentException => log.error(e, "") //TODO adicionar linha que realizou a chamada com erro
+      case e: IllegalArgumentException => log.error(e, "")
     }
+  }
+  
+  
+  private def tryShutdown() = {
+    ???
   }
   
   
