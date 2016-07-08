@@ -4,12 +4,8 @@ import akka.actor._
 import akka.actor.SupervisorStrategy._
 import Message._
 
-
 /*
- * TODO: Implementar o gerenciador de processos que cuidara da criação e armazenamento de processos
- * TODO: Modificar o parametro dos metodos apply dos processos SKIP e STOP. Para gerar uma hierarquia, 
- * não precisamos do ActorSystem, precisamos do contexto do ator que será o pai do novo ator.
- * TODO: O actorSystem só será usado para criar o gerenciador de processos
+ * TODO: É possível indicar a linha que causou uma exceção no log?
  * TODO: Implementar condição de término do actorSystem
  */
 
@@ -20,18 +16,27 @@ import Message._
 object CSPA {
 
   implicit val system = ActorSystem("CSPA")
-  implicit def stringToEvent(a: String) = SingleEvent(a)
+  val manager = ProcessManager()
 
   def main(args: Array[String]) {
+    
+    create("st", "STOP")
+    create("stp", "STOPP")
+    create("STOP", "STOP")
+    create("SKIP", "STOPP")
+    create("sk", "SKIP")
+    
+    run("st")
+    run("sk")
+  }
+  
 
-    val st = STOP()
-    val sk = SKIP()
-    //val pre = Prefix("", "a", st)
-
-    st ! Start
-    sk ! Start
-    //pre ! Start
-
+  def create(name: String, proc: String) = {
+    manager ! Create(name, proc)   
+  }
+  
+  def run(name: String) = {
+    manager ! Run(name)
   }
 
 }

@@ -28,7 +28,11 @@ class STOP extends Process with ActorLogging {
 }
 
 object STOP {
-  def apply()(implicit as: ActorSystem): ActorRef = {
-    as.actorOf(Props[STOP])
+  def apply()(implicit ac: ActorContext): ActorRef = {
+    ac.actorOf(Props[STOP])
+  }
+  
+  def apply(name: String)(implicit ac: ActorContext): ActorRef = {
+    ac.actorOf(Props[STOP], name)
   }
 }
