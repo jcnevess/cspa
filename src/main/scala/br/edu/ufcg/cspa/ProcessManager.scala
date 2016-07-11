@@ -47,14 +47,15 @@ class ProcessManager extends Actor with ActorLogging {
   }
   
   
-  private def tryShutdown() = {
-    ???
+  private def shutdown() = {
+    context.system.terminate()
   }
   
   
   def receive: Receive = {
     case Create(name, proc) => persistProcess(name, proc)
     case Run(name) => processPool(name) ! Start
+    case Shutdown => shutdown()
   }  
   
 }

@@ -30,6 +30,9 @@ object CSPA {
     
     run("st")
     run("sk")
+    run("stp")
+    
+    shutdown()
   }
   
 
@@ -39,6 +42,10 @@ object CSPA {
   
   def run(name: String) = {
     manager ! Run(name)
+  }
+  
+  def shutdown() = {
+    manager ! Shutdown
   }
 
 }
