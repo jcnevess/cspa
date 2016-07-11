@@ -23,15 +23,6 @@ class SKIP extends Process with ActorLogging {
       STOP() ! Perform(trace, Nil)
   }
 
-  final val defaultStrategy: SupervisorStrategy = {
-    def defaultDecider: Decider = {
-      case _: ActorInitializationException => Stop
-      case _: ActorKilledException         => Escalate
-      case _: Exception                    => Restart
-    }
-    OneForOneStrategy()(defaultDecider)
-  }
-
   override def toString() = "SKIP"
 }
 

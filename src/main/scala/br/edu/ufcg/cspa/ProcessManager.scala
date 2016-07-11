@@ -16,8 +16,32 @@ class ProcessManager extends Actor with ActorLogging {
 
   def receive: Receive = {
     case Create(name, proc) => persistProcess(name, proc)
-    case Run(name)          => processPool(name) ! Start
+    case Run(name)          => runProcess(name)
     case Shutdown           => shutdown()
+  }
+
+  private def runProcess(name: String) = {
+    try {
+      processPool(name) ! Start
+    } catch {
+      case e: NoSuchElementException => log.error(e, "")
+    }
+  }
+
+  private def persistProcess(name: String, proc: String) = {
+    try {
+      tryPersistProcess(name, proc)
+    } catch {
+      case e: IllegalArgumentException => log.error(e, "")
+      case e: NoSuchElementException   => log.error(e, "")
+    }
+  }
+
+  private def tryPersistProcess(name: String, proc: String) = {
+    if (name.equalsIgnoreCase("stop") || name.equalsIgnoreCase("skip"))
+      throw new IllegalArgumentException("User defined processes can not be named 'SKIP' or 'STOP'")
+    else
+      processPool += (name -> processOf(name, proc))
   }
 
   private def eventOf(a: String) = {
@@ -44,8 +68,18 @@ class ProcessManager extends Actor with ActorLogging {
 
   private def createPrefix(name: String, procString: String): ActorRef = {
     val cleanProc = procString.trim().replace("\\s", "")
-    val eventAndProcesses = cleanProc.split("->").toList
-    Prefix(name, eventOf(eventAndProcesses.head), createPrefixAcc(eventAndProcesses.tail))
+    var eventAndProcesses = cleanProc.split("->").toList
+    
+    //Lida com a recursão simples
+    //FIXME multiplicar os eventos existentes por 100 e adicionar STOP ao final
+    if(name == eventAndProcesses.last) {
+      eventAndProcesses = eventAndProcesses.init
+      eventAndProcesses = 100 * eventAndProcesses
+      eventAndProcesses = eventAndProcesses ++ List(processPool("STOP"))
+      Prefix(name, eventOf(eventAndProcesses.head), createPrefixAcc(eventAndProcesses.tail))
+    } else {
+      Prefix(name, eventOf(eventAndProcesses.head), createPrefixAcc(eventAndProcesses.tail))
+    }
   }
 
   private def createPrefixAcc(evtProcs: List[String]): ActorRef = evtProcs match {
@@ -53,21 +87,6 @@ class ProcessManager extends Actor with ActorLogging {
       processPool(x)
     case x :: xs =>
       Prefix(eventOf(x), createPrefixAcc(xs))
-  }
-
-  private def tryPersistProcess(name: String, proc: String) = {
-    if (name.equalsIgnoreCase("stop") || name.equalsIgnoreCase("skip"))
-      throw new IllegalArgumentException("User defined processes can not be named 'SKIP' or 'STOP'")
-    else
-      processPool += (name -> processOf(name, proc))
-  }
-
-  private def persistProcess(name: String, proc: String) = {
-    try {
-      tryPersistProcess(name, proc)
-    } catch {
-      case e: IllegalArgumentException => log.error(e, "")
-    }
   }
 
   private def shutdown() = {
