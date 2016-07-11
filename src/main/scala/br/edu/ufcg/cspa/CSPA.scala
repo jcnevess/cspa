@@ -6,9 +6,7 @@ import Message._
 
 /*
  * TODO: É possível indicar a linha que causou uma exceção no log?
- * TODO: Implementar condição de término do actorSystem
  * TODO: Criar branch para implementar o prefixo
- * TODO: Essa pattern pode ser util? http://doc.akka.io/docs/akka/current/contrib/aggregator.html
  */
 
 
@@ -30,9 +28,9 @@ object CSPA {
     
     run("st")
     run("sk")
-    run("stp")
     
     shutdown()
+    
   }
   
 

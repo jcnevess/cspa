@@ -18,7 +18,7 @@ class Prefix(val firstEvent: SingleEvent,
 }
 
 object Prefix {
-  def apply(name: String, firstEvent: SingleEvent, nextProcess: ActorRef)(implicit as: ActorSystem): ActorRef = {
-    as.actorOf(Props(classOf[Prefix], name, firstEvent, nextProcess))
+  def apply(name: String, firstEvent: SingleEvent, nextProcess: ActorRef)(implicit ac: ActorContext): ActorRef = {
+    ac.actorOf(Props(classOf[Prefix], name, firstEvent, nextProcess))
   }
 }

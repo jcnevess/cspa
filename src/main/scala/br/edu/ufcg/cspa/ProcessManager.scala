@@ -22,7 +22,31 @@ class ProcessManager extends Actor with ActorLogging {
   private def processOf(name: String, proc: String) = proc match {
     case "STOP" => STOP(name)
     case "SKIP" => SKIP(name)
-    case _ => throw new IllegalArgumentException("Could not match given string with a process")
+    case _ => 
+      if (isValid(proc))
+        createPrefix(name, proc)
+      else
+        throw new IllegalArgumentException("Could not match given string with a process")
+  }
+  
+  
+  def isValid(procString: String) = {
+    val regex = "(\\s*[a-z]+\\s*->)+\\s*[A-Z]+\\s*"
+    procString.matches(regex)
+  }
+  
+  
+  private def createPrefix(name: String, procString: String): ActorRef = {
+    val cleanName = name.trim().replace("\\s", "")
+    val eventAndProcesses = cleanName.split("->").toList
+    Prefix(name, eventOf(eventAndProcesses.head), createPrefixAcc(eventAndProcesses.tail))
+  }
+  
+  private def createPrefixAcc(evtProcs: List[String]): ActorRef = evtProcs match {
+    case x :: Nil =>
+      processPool(x)
+    case x :: xs =>
+      Prefix("", eventOf(x), createPrefixAcc(xs))     
   }
   
   
@@ -30,11 +54,7 @@ class ProcessManager extends Actor with ActorLogging {
     if(name.equalsIgnoreCase("stop") || name.equalsIgnoreCase("skip"))
       throw new IllegalArgumentException("User defined processes can not be named 'SKIP' or 'STOP'")
     else
-      try {
-        processPool += (name -> processOf(name, proc))
-      } catch {
-        case e: IllegalArgumentException => throw e
-      }
+      processPool += (name -> processOf(name, proc))
    }
   
   
