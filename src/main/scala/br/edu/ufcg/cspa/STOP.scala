@@ -16,7 +16,9 @@ class STOP extends Process with ActorLogging {
     case Perform(trace_, states_) =>
       trace = trace_
       states = Omega :: states_
-      log.info(trace.map(_.toString).foldRight("STOP")(_ + " -> " + _))
+      log.info(trace.map(_.toString)
+          .reverse
+          .foldRight("STOP")(_ + " -> " + _))
       context.stop(self)
     case Start =>
       states = List(Omega)

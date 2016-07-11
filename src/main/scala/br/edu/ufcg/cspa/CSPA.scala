@@ -21,13 +21,16 @@ object CSPA {
   def main(args: Array[String]) {
     
     create("st", "STOP")
-    create("stp", "STOPP")
-    create("STOP", "STOP")
-    create("SKIP", "STOPP")
     create("sk", "SKIP")
+    create("new1", "a->SKIP")
+    create("new3", "a->b->STOP")
+    create("new2", "->SKIP")
+    
     
     run("st")
     run("sk")
+    run("new1")
+    run("new3")
     
     shutdown()
     
