@@ -19,11 +19,9 @@ class STOP extends Process with ActorLogging {
       log.info(trace.map(_.toString)
           .reverse
           .foldRight("STOP")(_ + " -> " + _))
-      context.stop(self)
     case Start =>
       states = List(Omega)
       log.info("STOP")
-      context.stop(self)
   }
 
   override def toString() = "STOP"

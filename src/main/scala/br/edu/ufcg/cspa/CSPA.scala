@@ -23,8 +23,10 @@ object CSPA {
 
     create("st", "STOP")
     create("sk", "SKIP")
-    create("new1", "a->SKIP")
+    create("new1", "a->a->SKIP")
+    create("new2", "a->STOP")
     create("new3", "a->b->STOP")
+    create("new4", "a->SKIP")
     create("A", "a->SKIP")
     create("B", "c->A")
     create("C", "c->C")
@@ -32,8 +34,8 @@ object CSPA {
     //run("st")
     //run("sk")
     //run("new1")
-    run("new3")
-    run("new3")
+    run("new2")
+    run("new2")
     //run("B")
     //run("C")
     
