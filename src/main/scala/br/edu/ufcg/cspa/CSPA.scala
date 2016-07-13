@@ -3,11 +3,11 @@ package br.edu.ufcg.cspa
 import akka.actor._
 import akka.actor.SupervisorStrategy._
 import Message._
+import scala.concurrent.{ ExecutionContext, Future }
+import ExecutionContext.Implicits.global
 
 /*
  * TODO: É possível indicar a linha que causou uma exceção no log?
- * TODO: Mudar momento em que os processos são criados para permitir recursões.
- * O ideal é que os processos sejam efetivamente criados na primeira execução do run
  * TODO: Melhorar a lógica do shutdown
  */
 
@@ -21,26 +21,34 @@ object CSPA {
 
   def main(args: Array[String]) {
 
-    create("st", "STOP")
-    create("sk", "SKIP")
-    create("new1", "a->a->SKIP")
-    create("new2", "a->STOP")
-    create("new3", "a->b->STOP")
-    create("new4", "a->SKIP")
-    create("A", "a->SKIP")
-    create("B", "c->A")
-    create("C", "c->C")
+    //execute {
 
-    //run("st")
-    //run("sk")
-    //run("new1")
-    run("new2")
-    run("new2")
-    //run("B")
-    //run("C")
-    
+      create("st", "STOP")
+      create("sk", "SKIP")
+      create("new1", "a->a->SKIP")
+      create("new2", "a->STOP")
+      create("new3", "a->b->c->STOP")
+      create("new4", "a->b->c->SKIP")
+      create("A", "a->SKIP")
+      create("B", "b->A")
+      create("C", "c->C")
+      create("D", "d->D")
+      create("E", "e->E")
+      create("F", "f->F")
 
-    shutdown()
+      run("st")
+      run("sk")
+      run("new1")
+      run("new2")
+      run("new3")
+      run("new4")
+      run("B")
+      run("C")
+      run("D")
+      run("E")
+      run("F")
+      
+    //} 
 
   }
 
@@ -51,9 +59,11 @@ object CSPA {
   def run(name: String) = {
     manager ! Run(name)
   }
-
-  def shutdown() = {
-    manager ! Shutdown
+  
+  def execute(procedure: => Unit) = {
+    Future {procedure} onComplete {
+      case _ => manager ! Shutdown
+    }
   }
 
 }

@@ -2,6 +2,7 @@ package br.edu.ufcg.cspa
 
 import akka.actor._
 import scala.collection._
+import scala.concurrent.duration._
 import Message._
 
 /**
