@@ -19,6 +19,7 @@ class ProcessManager extends Actor with ActorLogging {
     case Run(name)          => runProcess(name)
     case Shutdown           => shutdown()
   }
+  
 
   private def runProcess(name: String) = {
     try {
@@ -27,6 +28,7 @@ class ProcessManager extends Actor with ActorLogging {
       case e: NoSuchElementException => log.error(e, "")
     }
   }
+  
 
   private def persistProcess(name: String, proc: String) = {
     try {
@@ -36,6 +38,7 @@ class ProcessManager extends Actor with ActorLogging {
       case e: NoSuchElementException   => log.error(e, "")
     }
   }
+  
 
   private def tryPersistProcess(name: String, proc: String) = {
     if (name.equalsIgnoreCase("stop") || name.equalsIgnoreCase("skip"))
@@ -69,19 +72,24 @@ class ProcessManager extends Actor with ActorLogging {
   private def createPrefix(name: String, procString: String): ActorRef = {
     val cleanProc = procString.trim().replace("\\s", "")
     var eventAndProcesses = cleanProc.split("->").toList
-    
+
     //Lida com a recursão simples
-    //FIXME multiplicar os eventos existentes por 100 e adicionar STOP ao final
-    if(name == eventAndProcesses.last) {
-      eventAndProcesses = eventAndProcesses.init
-      eventAndProcesses = 100 * eventAndProcesses
-      eventAndProcesses = eventAndProcesses ++ List(processPool("STOP"))
-      Prefix(name, eventOf(eventAndProcesses.head), createPrefixAcc(eventAndProcesses.tail))
-    } else {
-      Prefix(name, eventOf(eventAndProcesses.head), createPrefixAcc(eventAndProcesses.tail))
+    //A recursão simples está limitada a 100 vezes
+    if (name == eventAndProcesses.last) {
+      val initEventAndProcesses = eventAndProcesses.init
+      var newEventAndProcesses: List[String] = eventAndProcesses.init
+      for (x <- 1 until 100) {
+        newEventAndProcesses = newEventAndProcesses ++ initEventAndProcesses
+      }
+      newEventAndProcesses = newEventAndProcesses ++ List("STOP")
+      eventAndProcesses = newEventAndProcesses
     }
+    
+    Prefix(name, eventOf(eventAndProcesses.head), createPrefixAcc(eventAndProcesses.tail))
+
   }
 
+  //Change context
   private def createPrefixAcc(evtProcs: List[String]): ActorRef = evtProcs match {
     case x :: Nil =>
       processPool(x)
@@ -97,6 +105,6 @@ class ProcessManager extends Actor with ActorLogging {
 
 object ProcessManager {
   def apply()(implicit as: ActorSystem) = {
-    as.actorOf(Props[ProcessManager])
+    as.actorOf(Props[ProcessManager], "ProcessManager")
   }
 }

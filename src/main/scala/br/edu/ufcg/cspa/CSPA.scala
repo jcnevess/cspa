@@ -29,11 +29,14 @@ object CSPA {
     create("B", "c->A")
     create("C", "c->C")
 
-    run("st")
-    run("sk")
-    run("new1")
+    //run("st")
+    //run("sk")
+    //run("new1")
     run("new3")
-    run("B")
+    run("new3")
+    //run("B")
+    //run("C")
+    
 
     shutdown()
 
