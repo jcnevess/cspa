@@ -5,6 +5,8 @@ import akka.actor.SupervisorStrategy._
 import Message._
 import scala.concurrent.{ ExecutionContext, Future }
 import ExecutionContext.Implicits.global
+import scala.io._
+import scala.util.Random
 
 /*
  * TODO: É possível indicar a linha que causou uma exceção no log?
@@ -21,34 +23,33 @@ object CSPA {
 
   def main(args: Array[String]) {
 
-    //execute {
+    create("st", "STOP")
+    create("sk", "SKIP")
+    create("new1", "a->a->SKIP")
+    create("new2", "a->STOP")
+    create("new3", "a->b->c->STOP")
+    create("new4", "a->b->c->SKIP")
+    create("A", "a->SKIP")
+    create("B", "b->A")
+    create("C", "c->C")
+    create("D", "d->D")
+    create("E", "e->E")
+    create("F", "f->F")
+    
+    externalChoice("G", "A", "B")
 
-      create("st", "STOP")
-      create("sk", "SKIP")
-      create("new1", "a->a->SKIP")
-      create("new2", "a->STOP")
-      create("new3", "a->b->c->STOP")
-      create("new4", "a->b->c->SKIP")
-      create("A", "a->SKIP")
-      create("B", "b->A")
-      create("C", "c->C")
-      create("D", "d->D")
-      create("E", "e->E")
-      create("F", "f->F")
+    run("st")
+    run("sk")
+    run("new1")
+    run("new2")
+    run("new3")
+    run("new4")
+    run("B")
+    run("C")
+    run("D")
+    run("E")
+    run("F")
 
-      run("st")
-      run("sk")
-      run("new1")
-      run("new2")
-      run("new3")
-      run("new4")
-      run("B")
-      run("C")
-      run("D")
-      run("E")
-      run("F")
-      
-    //} 
 
   }
 
@@ -59,11 +60,53 @@ object CSPA {
   def run(name: String) = {
     manager ! Run(name)
   }
-  
+
   def execute(procedure: => Unit) = {
-    Future {procedure} onComplete {
+    Future { procedure } onComplete {
       case _ => manager ! Shutdown
     }
   }
+  
+  def externalChoice(name: String, proc1: String, proc2: String) = {
+    println("Escolha externa: 1 para proc1, 2 para proc2")
+    val choice = StdIn.readInt()
+    
+    if(choice == 1) {
+      println("Executando proc1")
+      create(name, proc1)
+      run(name)
+    } else {
+      println("Executando proc2")
+      create(name, proc2)
+      run(name)
+    }
+  }
+  
+  def internalChoice(name: String, proc1: String, proc2: String) = {
+    println("Escolha interna")
+    val choice = Random.nextInt(2) + 1
+    
+    if(choice == 1) {
+      println("Executando proc1")
+      create(name, proc1)
+      run(name)
+    } else {
+      println("Executando proc2")
+      create(name, proc2)
+      run(name)
+    }
+  }
+
+  /*implicit def toProcessableString(value: String): ProcessableString = ProcessableString(value)
+
+  case class ProcessableString(name: String) {
+    def <<<(proc: String) = {
+      create(name, proc)
+    }
+    
+    def unary_$(): Unit = {
+      run(name)
+    }
+  }*/
 
 }
