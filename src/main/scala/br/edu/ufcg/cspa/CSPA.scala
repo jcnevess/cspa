@@ -36,7 +36,8 @@ object CSPA {
     create("E", "e->E")
     create("F", "f->F")
     
-    externalChoice("G", "A", "B")
+    externalChoice("A", "B")
+    internalChoice("A", "B")
 
     run("st")
     run("sk")
@@ -67,33 +68,29 @@ object CSPA {
     }
   }
   
-  def externalChoice(name: String, proc1: String, proc2: String) = {
-    println("Escolha externa: 1 para proc1, 2 para proc2")
+  def externalChoice(proc1: String, proc2: String) = {
+    println("Escolha externa: 1 para processo 1, 2 para processo 2")
     val choice = StdIn.readInt()
     
     if(choice == 1) {
-      println("Executando proc1")
-      create(name, proc1)
-      run(name)
+      println("O processo 1 (" + proc1 + ") será executado")
+      run(proc1)
     } else {
-      println("Executando proc2")
-      create(name, proc2)
-      run(name)
+      println("O processo 2 (" + proc2 + ") será executado")
+      run(proc2)
     }
   }
   
-  def internalChoice(name: String, proc1: String, proc2: String) = {
+  def internalChoice(proc1: String, proc2: String) = {
     println("Escolha interna")
     val choice = Random.nextInt(2) + 1
     
     if(choice == 1) {
-      println("Executando proc1")
-      create(name, proc1)
-      run(name)
+      println("O processo 1 (" + proc1 + ") será executado")
+      run(proc1)
     } else {
-      println("Executando proc2")
-      create(name, proc2)
-      run(name)
+      println("O processo 2 (" + proc2 + ") será executado")
+      run(proc2)
     }
   }
 
