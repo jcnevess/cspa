@@ -6,15 +6,22 @@ import scala.concurrent.duration._
 import Message._
 
 /**
- * Gerencia os processos
+ * Manages all logic involving processes
+ * @author Julio Cesar Neves
  */
 class ProcessManager extends Actor with ActorLogging {
 
+  /**
+   * Persists the created processes
+   */
   private val processPool: mutable.Map[String, ActorRef] = mutable.Map()
 
   processPool("STOP") = STOP("STOP")
   processPool("SKIP") = SKIP("SKIP")
 
+  /**
+   * Handles messages and calls corresponding methods
+   */
   def receive: Receive = {
     case Create(name, proc) => persistProcess(name, proc)
     case Run(name)          => runProcess(name)
@@ -22,6 +29,11 @@ class ProcessManager extends Actor with ActorLogging {
   }
   
 
+  /**
+   * Runs a given process.
+   * If the process can not be found, logs an error
+   * @param name The name of the process to run
+   */
   private def runProcess(name: String) = {
     try {
       processPool(name) ! Start
@@ -31,6 +43,10 @@ class ProcessManager extends Actor with ActorLogging {
   }
   
 
+  /**
+   * Persists a given process.
+   * If the process does not exist or has an invalid name, logs an error
+   */
   private def persistProcess(name: String, proc: String) = {
     try {
       tryPersistProcess(name, proc)
@@ -41,6 +57,10 @@ class ProcessManager extends Actor with ActorLogging {
   }
   
 
+  /**
+   * Add a given process to the process pool
+   * @throws IllegalArgumentException if event name is similar to 'skip' or 'stop'
+   */
   private def tryPersistProcess(name: String, proc: String) = {
     if (name.equalsIgnoreCase("stop") || name.equalsIgnoreCase("skip"))
       throw new IllegalArgumentException("User defined processes can not be named 'SKIP' or 'STOP'")
@@ -48,6 +68,11 @@ class ProcessManager extends Actor with ActorLogging {
       processPool += (name -> processOf(name, proc))
   }
 
+  /**
+   * Create an event based on the given String.
+   * @param a the String which will be turned into an event
+   * @throws IllegalArgumentException if event name does not start with a lowercase character
+   */
   private def eventOf(a: String) = {
     if (!a.charAt(0).isLower)
       throw new IllegalArgumentException("Events name must start with a alphabetic lowercase character")
@@ -55,6 +80,12 @@ class ProcessManager extends Actor with ActorLogging {
       SingleEvent(a)
   }
 
+  /**
+   * Create a process using the given String
+   * @param name The name of the event
+   * @param proc The string to be used while creating the process
+   * @throws IllegalArgumentException If proc can not be match with a process
+   */
   private def processOf(name: String, proc: String) = proc match {
     case "STOP" => STOP(name)
     case "SKIP" => SKIP(name)
@@ -65,17 +96,26 @@ class ProcessManager extends Actor with ActorLogging {
         throw new IllegalArgumentException("Could not match given string with a process")
   }
 
-  def isValid(procString: String) = {
+  /**
+   * Verifies if a given string can be parsed into a process
+   * @param procString The string to be verified
+   */
+  private def isValid(procString: String) = {
     val regex = "(\\s*[a-z]+\\s*->)+\\s*[A-Z]+\\s*"
     procString.matches(regex)
   }
 
+  /**
+   * Creates an process of type Prefix
+   * @param name The name of the process
+   * @param procString The string which will be parsed into a prefix
+   */
   private def createPrefix(name: String, procString: String): ActorRef = {
     val cleanProc = procString.trim().replace("\\s", "")
     var eventAndProcesses = cleanProc.split("->").toList
 
-    //Lida com a recursão simples
-    //A recursão simples está limitada a 100 vezes
+    //Handles single recursion
+    //Single recursion is limited to 100 recurrences
     if (name == eventAndProcesses.last) {
       val initEventAndProcesses = eventAndProcesses.init
       var newEventAndProcesses: List[String] = eventAndProcesses.init
@@ -90,7 +130,6 @@ class ProcessManager extends Actor with ActorLogging {
 
   }
 
-  //Change context
   private def createPrefixAcc(evtProcs: List[String]): ActorRef = evtProcs match {
     case x :: Nil =>
       processPool(x)
@@ -98,6 +137,9 @@ class ProcessManager extends Actor with ActorLogging {
       Prefix(eventOf(x), createPrefixAcc(xs))
   }
 
+  /**
+   * Shutdown the actorSystem
+   */
   private def shutdown() = {
     context.system.terminate()
   }
