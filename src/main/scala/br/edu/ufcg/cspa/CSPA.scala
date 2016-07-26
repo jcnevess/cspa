@@ -21,40 +21,8 @@ object CSPA {
   implicit val system = ActorSystem("CSPA")
   val manager = ProcessManager()
 
-  def main(args: Array[String]) {
 
-    create("st", "STOP")
-    create("sk", "SKIP")
-    create("new1", "a->a->SKIP")
-    create("new2", "a->STOP")
-    create("new3", "a->b->c->STOP")
-    create("new4", "a->b->c->SKIP")
-    create("A", "a->SKIP")
-    create("B", "b->A")
-    create("C", "c->C")
-    create("D", "d->D")
-    create("E", "e->E")
-    create("F", "f->F")
-    
-    externalChoice("A", "B")
-    internalChoice("A", "B")
-
-    run("st")
-    run("sk")
-    run("new1")
-    run("new2")
-    run("new3")
-    run("new4")
-    run("B")
-    run("C")
-    run("D")
-    run("E")
-    run("F")
-
-
-  }
-
-  def create(name: String, proc: String) = {
+  private def create(name: String, proc: String) = {
     manager ! Create(name, proc)
   }
 
@@ -62,48 +30,55 @@ object CSPA {
     manager ! Run(name)
   }
 
-  def execute(procedure: => Unit) = {
+  private def execute(procedure: => Unit) = {
     Future { procedure } onComplete {
       case _ => manager ! Shutdown
     }
   }
-  
-  def externalChoice(proc1: String, proc2: String) = {
-    println("Escolha externa: 1 para processo 1, 2 para processo 2")
+
+  private def externalChoice(proc1: String, proc2: String): String = {
+    println("External choice: 1 for process 1, 2 for process 2")
     val choice = StdIn.readInt()
-    
-    if(choice == 1) {
-      println("O processo 1 (" + proc1 + ") será executado")
+
+    if (choice == 1) {
+      println("Process 1 (" + proc1 + ") will be executed")
       run(proc1)
-    } else {
-      println("O processo 2 (" + proc2 + ") será executado")
+      proc1
+    } else if (choice == 2) {
+      println("Process 2 (" + proc2 + ") will be executed")
       run(proc2)
+      proc2
+    } else {
+      throw new UnsupportedOperationException("Unknown process")
     }
+
   }
-  
-  def internalChoice(proc1: String, proc2: String) = {
-    println("Escolha interna")
+
+  private def internalChoice(proc1: String, proc2: String): String = {
+    println("Internal choice")
     val choice = Random.nextInt(2) + 1
-    
-    if(choice == 1) {
-      println("O processo 1 (" + proc1 + ") será executado")
+
+    if (choice == 1) {
+      println("Process 1 (" + proc1 + ") will be executed")
       run(proc1)
+      proc1
     } else {
-      println("O processo 2 (" + proc2 + ") será executado")
+      println("Process 2 (" + proc1 + ") will be executed")
       run(proc2)
+      proc2
     }
   }
 
-  /*implicit def toProcessableString(value: String): ProcessableString = ProcessableString(value)
+  implicit def stringToOperableString(proc: String): OperableString = new OperableString(proc)
+  implicit def stringToProcessableString(name: String): ProcessableString = new ProcessableString(name)
 
-  case class ProcessableString(name: String) {
-    def <<<(proc: String) = {
-      create(name, proc)
-    }
-    
-    def unary_$(): Unit = {
-      run(name)
-    }
-  }*/
+  class OperableString(proc1: String) {
+    def |=|(proc2: String): String = externalChoice(proc1, proc2)
+    def |~|(proc2: String): String = internalChoice(proc1, proc2)
+  }
+
+  class ProcessableString(name: String) {
+    def |:|(proc: String) = create(name, proc)
+  }
 
 }
