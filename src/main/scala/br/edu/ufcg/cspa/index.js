@@ -1,1 +1,0 @@
-Index.PACKAGES = {"br" : [], "br.edu" : [], "br.edu.ufcg" : [], "br.edu.ufcg.cspa" : [{"object" : "br\/edu\/ufcg\/cspa\/ProcessManager$.html", "class" : "br\/edu\/ufcg\/cspa\/ProcessManager.html", "name" : "br.edu.ufcg.cspa.ProcessManager"}]};
